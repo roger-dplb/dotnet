@@ -17,7 +17,23 @@ public static class StockMappers
             LastDiv = stockModel.LastDiv,
             Industry = stockModel.Industry,
             MarketCap = stockModel.MarketCap
-            
+
+        };
+    }
+
+    public static Stock ToStockFromCreateDTO(this CreateStockRequestDto createStockRequestDto)
+    {
+        return new Stock
+        {
+            Symbol = createStockRequestDto.Symbol,
+            CompanyName = createStockRequestDto.CompanyName,
+            Purchase = createStockRequestDto.Purchase,
+            Divdend = createStockRequestDto.Divdend,
+            LastDiv = createStockRequestDto.LastDiv,
+            Industry = createStockRequestDto.Industry,
+            MarketCap = createStockRequestDto.MarketCap
         };
     }
 }
+
+

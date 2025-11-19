@@ -37,22 +37,13 @@ namespace meta.Controllers
             return Ok(stock.ToStockDto());
         }
 
-        [HttpPost("")]
-        public IActionResult Create([FromBody] StockDto stockDto)
+        [HttpPost]
+        public IActionResult Create([FromBody] CreateStockRequestDto stockDto)
         {
-            var stock = new meta.Models.Stock
-            {
-                Symbol = stockDto.Symbol,
-                CompanyName = stockDto.CompanyName,
-                Purchase = stockDto.Purchase,
-                Divdend = stockDto.Divdend,
-                LastDiv = stockDto.LastDiv,
-                Industry = stockDto.Industry,
-                MarketCap = stockDto.MarketCap
-            };
-            _context.Stock.Add(stock);
+            var stockModel = stockDto.ToStockFromCreateDTO();
+            _context.Stock.Add(stockModel);
             _context.SaveChanges();
-            return CreatedAtAction(nameof(GetById), new { id = stock.Id }, stock.ToStockDto());
+            return CreatedAtAction(nameof(GetById), new { id = stockModel.Id }, stockModel.ToStockDto());
         }
     }
 }

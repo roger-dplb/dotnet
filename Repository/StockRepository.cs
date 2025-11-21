@@ -1,5 +1,6 @@
 using meta.Data;
 using meta.Dtos.Stock;
+using meta.Helpers;
 using meta.Interfaces;
 using meta.Models;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +11,27 @@ public class StockRepository(ApplicationDbContext context) : IStockRepository
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<List<Stock>> GetAllStocksAsync()
+    public async Task<List<Stock>> GetAllStocksAsync(QueryObject query)
     {
-        return await _context.Stock.Include(c => c.Comments).ToListAsync();
+        var stocks = _context.Stock.Include(c => c.Comments).AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(query.CompanyName))
+        {
+            stocks = stocks.Where(s => s.CompanyName.Contains(query.CompanyName));
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.Symbol))
+        {
+            stocks = stocks.Where(s => s.Symbol.Contains(query.Symbol));
+        }
+
+        if (string.IsNullOrEmpty(query.SortBy)) return await stocks.ToListAsync();
+        if (query.SortBy.Equals("Symbol", StringComparison.OrdinalIgnoreCase))
+        {
+            stocks = query.IsDescending ? stocks.OrderByDescending(o => o.Symbol) : stocks.OrderBy(o => o.Symbol);
+        }
+
+        return await stocks.ToListAsync();
     }
 
     public async Task<Stock?> GetStockByIdAsync(int id)
@@ -37,7 +56,7 @@ public class StockRepository(ApplicationDbContext context) : IStockRepository
         existingStock.Symbol = updatedStock.Symbol;
         existingStock.CompanyName = updatedStock.CompanyName;
         existingStock.Purchase = updatedStock.Purchase;
-        existingStock.Divdend = updatedStock.Divdend;
+        existingStock.Divdend = updatedStock.Dividend;
         existingStock.LastDiv = updatedStock.LastDiv;
         existingStock.Industry = updatedStock.Industry;  
         await _context.SaveChangesAsync();
@@ -54,5 +73,10 @@ public class StockRepository(ApplicationDbContext context) : IStockRepository
        _context.Stock.Remove(stock);
         await _context.SaveChangesAsync();
         return stock;
+    }
+
+    public Task<bool> StockExistsAsync(int id)
+    {
+        return _context.Stock.AnyAsync(s => s.Id == id);
     }
 }

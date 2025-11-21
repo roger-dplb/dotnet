@@ -1,13 +1,16 @@
 using meta.Dtos.Stock;
+using meta.Helpers;
 using meta.Models;
 
 namespace meta.Interfaces;
 
 public interface IStockRepository
 {
-    Task<List<Stock>> GetAllStocksAsync();
+    Task<List<Stock>> GetAllStocksAsync(QueryObject query);
     Task<Stock?> GetStockByIdAsync(int id);
     Task<Stock> CreateStockAsync(Stock stock);
     Task<Stock?> UpdateStockAsync(int id, UpdateStockRequestDto updatedStock);
     Task<Stock?> DeleteStock(int id);
+    
+    Task<bool> StockExistsAsync(int id);
 }

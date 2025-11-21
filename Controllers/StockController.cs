@@ -3,6 +3,8 @@ using meta.Interfaces;
 using meta.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
+using meta.Helpers;
+
 namespace meta.Controllers
 
 {
@@ -13,16 +15,24 @@ namespace meta.Controllers
         private readonly IMapper _mapper = mapper;  
         private readonly IStockRepository _repo = repo;
         [HttpGet]
-        public async Task <IActionResult> GetAll()
+        public async Task <IActionResult> GetAll([FromQuery]QueryObject query)
         {
-            var stocks = await _repo.GetAllStocksAsync();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var stocks = await _repo.GetAllStocksAsync(query);
             var stocksDto = _mapper.Map<IEnumerable<StockDto>>(stocks);
             return Ok(stocksDto);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task <IActionResult> GetById([FromRoute] int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var stock = await _repo.GetStockByIdAsync(id);
             if (stock == null)
             {
@@ -36,14 +46,22 @@ namespace meta.Controllers
         [HttpPost]
         public async Task <IActionResult> Create([FromBody] CreateStockRequestDto stockDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var stockModel = stockDto.ToStockFromCreateDto();
             await  _repo.CreateStockAsync(stockModel);
             return CreatedAtAction(nameof(GetById), new { id = stockModel.Id }, stockModel.ToStockDto());
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult>Update([FromRoute] int id, [FromBody] UpdateStockRequestDto stockDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var stockModel = await _repo.GetStockByIdAsync(id);
             if (stockModel == null)
             {
@@ -57,6 +75,10 @@ namespace meta.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var stockModel = await _repo.DeleteStock(id);
             if (stockModel == null)
             {

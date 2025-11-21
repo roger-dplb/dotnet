@@ -28,7 +28,7 @@ public static class StockMappers
             Symbol = createStockRequestDto.Symbol,
             CompanyName = createStockRequestDto.CompanyName,
             Purchase = createStockRequestDto.Purchase,
-            Divdend = createStockRequestDto.Divdend,
+            Divdend = createStockRequestDto.Dividend,
             LastDiv = createStockRequestDto.LastDiv,
             Industry = createStockRequestDto.Industry,
             MarketCap = createStockRequestDto.MarketCap

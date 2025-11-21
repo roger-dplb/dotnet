@@ -1,12 +1,7 @@
-using System.ComponentModel.DataAnnotations.Schema;
-using meta.Dtos.Comment;
-using meta.Models;
-
 namespace meta.Dtos.Stock;
 
-public class StockDto
+public class UpdateStockRequestDto
 {
-    public int Id { get; set; }
     public string Symbol { get; set; } = string.Empty;
     public string CompanyName { get; set; } = string.Empty;
     public decimal Purchase { get; set; }
@@ -14,5 +9,4 @@ public class StockDto
     public decimal LastDiv { get; set; }
     public string Industry { get; set; } = string.Empty;
     public long MarketCap { get; set; }
-    public List<CommentDto> Comments { get; set; } = new List<CommentDto>();
 }

@@ -21,7 +21,7 @@ public static class StockMappers
         };
     }
 
-    public static Stock ToStockFromCreateDTO(this CreateStockRequestDto createStockRequestDto)
+    public static Stock ToStockFromCreateDto(this CreateStockRequestDto createStockRequestDto)
     {
         return new Stock
         {
